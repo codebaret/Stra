@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7138868815749758847
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9017501612274884606}
+  - component: {fileID: 6963839294996594934}
+  m_Layer: 0
+  m_Name: BuildingFactory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9017501612274884606
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7138868815749758847}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6963839294996594934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7138868815749758847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55419c48d2cf345fa8a6ad2e7e84ec13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  barracksPrefab: {fileID: 6132222581244219332, guid: 65ba9a3b7657a49358f067160a5b4ed2,
+    type: 3}
+  powerPlantPrefab: {fileID: 5394049842578501285, guid: f389cba02e8084473bfebff959a38b80,
+    type: 3}
+  soldierPrefab: {fileID: 3821846295962757739, guid: ed1cd5bad1c9e4b90a339e3b88f15aff,
+    type: 3}
+  barracksImage: {fileID: 21300000, guid: c6ac122126b2b4c1986d96ef08d931f4, type: 3}
+  powerPlantImage: {fileID: 21300000, guid: 0e1f0b3866d924d83ace8b69c63c7446, type: 3}
+  soldierImage: {fileID: 1842252918456944039, guid: cab8b0dbe66cf41aaa9669e315170d2c,
+    type: 3}
+  soldierFactory: {fileID: 5021705826274412580, guid: ac9b9683e80074aafafa7aa1018a3fd6,
+    type: 3}

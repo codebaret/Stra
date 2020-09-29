@@ -1,0 +1,25 @@
+﻿<Properties StartupConfiguration="{CECA8875-612C-5C98-DC58-C50556EB2501}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Utility/PathfindingAStar.cs">
+    <Files>
+      <File FileName="Assets/Scripts/Utility/PathfindingAStar.cs" Line="14" Column="23" />
+      <File FileName="Assets/Scripts/Controller/SoldierController.cs" Line="37" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="2D Example Game" expanded="True" />
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="3711bf01-deb9-49cc-bce5-5431cd5c31e1" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
