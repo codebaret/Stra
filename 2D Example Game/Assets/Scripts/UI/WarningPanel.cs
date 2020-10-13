@@ -11,7 +11,7 @@ public class WarningPanel : MonoBehaviour
     
     private void Start()
     {
-        Board.Instance.WarningPanelContentSetup += OnSetupPanel;
+        Publisher.WarningPanelContentSetup += OnSetupPanel;
         gameObject.SetActive(false);
     }
 

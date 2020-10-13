@@ -17,7 +17,7 @@ public class NavigationApplication : MonoBehaviour
             model.onNavigateOutside = new OnNavigateOutside();
 
         model.onNavigateOutside.AddListener(Board.Instance.Expand);
-        model.width = Board.Instance.initialDimension * Board.Instance.cellDimensionX;
+        model.width = Board.initialDimension * Board.cellDimensionX;
         float ratio = (float)Screen.height / Screen.width;
         model.height = model.width * ratio;
     }

@@ -10,7 +10,7 @@ public class CameraFollow : MonoBehaviour
     
     private void Start()
     {
-        float orthoSize = Board.Instance.initialDimension * Board.Instance.cellDimensionX * Screen.height / Screen.width * 0.5f;
+        float orthoSize = Board.initialDimension * Board.cellDimensionX * Screen.height / Screen.width * 0.5f;
         Camera.main.orthographicSize = orthoSize;
     }
 

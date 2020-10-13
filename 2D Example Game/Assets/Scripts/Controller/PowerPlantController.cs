@@ -22,6 +22,6 @@ public class PowerPlantController : BuildingController
 
     protected override void GetInformation()
     {
-        Board.Instance.PublishInformationPanelSetup(view.image, model.explanation, model.id);
+        Publisher.PublishInformationPanelSetup(view.image, model.explanation, model.id);
     }
 }

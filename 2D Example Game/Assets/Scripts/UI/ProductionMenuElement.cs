@@ -35,13 +35,19 @@ public class ProductionMenuElement : MonoBehaviour,IPointerDownHandler,IPointerU
     {
         var position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         var collider = _buildingObject.GetComponent<BoxCollider2D>();
-        var offsetX = (collider.size.x / Board.Instance.cellDimensionX) % 2;
-        var offsetY = (collider.size.y / Board.Instance.cellDimensionY) % 2;
-        _buildingObject.transform.position = new Vector3(position.x - (position.x % Board.Instance.cellDimensionX) + offsetX * Board.Instance.cellDimensionX / 2, position.y - (position.y % Board.Instance.cellDimensionY) + offsetY * Board.Instance.cellDimensionY / 2, -1); ;
+        var offsetX = (collider.size.x / Board.cellDimensionX) % 2;
+        var offsetY = (collider.size.y / Board.cellDimensionY) % 2;
+        _buildingObject.transform.position = new Vector3(position.x - (position.x % Board.cellDimensionX) + offsetX * Board.cellDimensionX / 2, position.y - (position.y % Board.cellDimensionY) + offsetY * Board.cellDimensionY / 2, -1); ;
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         _buildingObject = buildingFactory.GetBuilding(_buildingName);
+        var position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var collider = _buildingObject.GetComponent<BoxCollider2D>();
+        var offsetX = (collider.size.x / Board.cellDimensionX) % 2;
+        var offsetY = (collider.size.y / Board.cellDimensionY) % 2;
+        _buildingObject.transform.position = new Vector3(position.x - (position.x % Board.cellDimensionX) + offsetX * Board.cellDimensionX / 2, position.y - (position.y % Board.cellDimensionY) + offsetY * Board.cellDimensionY / 2, -1); ;
+
     }
 }

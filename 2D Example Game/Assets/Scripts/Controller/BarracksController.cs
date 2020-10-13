@@ -30,42 +30,42 @@ public class BarracksController : BuildingController
     {
         if (_barracksView.spawnPoint.IsOccupied())
         {
-            Board.Instance.PublishWarningPanelSetup("You need to move the soldier on the spawnpoint before producing more.");
-            return;
+            var pos = _barracksView.spawnPoint.gameObject.transform.position;
+            var alteredPosition = new Vector2(pos.x - Board.cellDimensionX / 2, pos.y - Board.cellDimensionY / 2);
+            if (!Publisher.PublishMakeSpaceRequest(alteredPosition))
+            {
+                Publisher.PublishWarningPanelSetup("Soldier spawn failed. There is no possible cells for the soldiers to make space.");
+                return;
+            }
         }
         var soldier = Instantiate(_barracksView.soldierPrefab,transform);
-        soldier.transform.position = new Vector3(_barracksView.spawnPoint.gameObject.transform.position.x, _barracksView.spawnPoint.gameObject.transform.position.y, -5);
         _barracksModel.soldierFactory.GetComponent<SoldierFactory>().PrepareSoldier(model.id, soldier);
-        _barracksView.spawnPoint.SetOccupied();
+        soldier.transform.position = new Vector3(_barracksView.spawnPoint.gameObject.transform.position.x, _barracksView.spawnPoint.gameObject.transform.position.y, -5);
+        Publisher.PublishMovementRequest(soldier, soldier.transform.position);
     }
 
     protected override void GetInformation()
     {
-        Board.Instance.PublishInformationPanelSetup(_barracksView.image, _barracksModel.explanation, _barracksModel.id);
-        Board.Instance.PublishInformationPanelUnitMenuSetup(_barracksView.soldierImage, this);
+        Publisher.PublishInformationPanelSetup(_barracksView.image, _barracksModel.explanation, _barracksModel.id);
+        Publisher.PublishInformationPanelUnitMenuSetup(_barracksView.soldierImage, this);
     }
 
     public override void PlaceBuilding(GameObject gameObject)
     {
         var collider = gameObject.GetComponent<BoxCollider2D>();
-        Rect spawnPoint = new Rect(gameObject.transform.position - new Vector3(collider.size.x / 2f, (collider.size.y / 2f) + Board.Instance.cellDimensionY, 0f), new Vector2(Board.Instance.cellDimensionX, Board.Instance.cellDimensionY));
+        Rect spawnPoint = new Rect(gameObject.transform.position - new Vector3(collider.size.x / 2f, (collider.size.y / 2f) + Board.cellDimensionY, 0f), new Vector2(Board.cellDimensionX, Board.cellDimensionY));
         Stack<string> spawnPointKey = new Stack<string>();
         if (!Board.Instance.ObjectPlacementIsOkay(spawnPoint,ref spawnPointKey))
         {
             Destroy(gameObject);
-            Board.Instance.NotifyBadPlacement();
+            Publisher.NotifyBadPlacement();
             return;
         }
         if (Board.Instance.PlaceTheObjects(gameObject))
         {
-            SetupSpawnPoint(Board.Instance.Cells[spawnPointKey.Pop()]);
+            var sp =  Board.Instance.Cells[spawnPointKey.Pop()];
+            sp.SetSpawnPoint();
+            _barracksView.spawnPoint = sp;
         }
-    }
-
-    private void SetupSpawnPoint(CellController spawnPoint)
-    {
-        spawnPoint.gameObject.GetComponent<SpriteRenderer>().color = new Color32(0, 0, 0, 0);
-        spawnPoint.SetSpawnPoint();
-        _barracksView.spawnPoint = spawnPoint;
     }
 }

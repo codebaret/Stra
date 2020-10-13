@@ -4,8 +4,18 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
+    public static int initialDimension;
+    public static float cellDimensionX;
+    public static float cellDimensionY;
+
     private static Board _instance;
-    public static Board Instance { get { return _instance; } }
+    public static Board Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
 
     private Dictionary<string, CellController> _cells;
     public Dictionary<string, CellController> Cells
@@ -15,19 +25,6 @@ public class Board : MonoBehaviour
 
     public GameObject mCellPrefab;
     public Rect border;
-    public int initialDimension;
-    public string panelSetterId;
-    public float cellDimensionX;
-    public float cellDimensionY;
-
-    public delegate void PublishEventInformationPanelContent(Sprite image, string text);
-    public event PublishEventInformationPanelContent InformationPanelContentSetup;
-
-    public delegate void PublishEventPanelUnitMenu(GameObject gameObject, BuildingController setterObject);
-    public event PublishEventPanelUnitMenu InformationPanelActivateUnitMenu;
-
-    public delegate void PublishEventWarningPanelContent( string text);
-    public event PublishEventWarningPanelContent WarningPanelContentSetup;
 
     public static string GenerateKey(Vector2 vector2)
     {
@@ -45,6 +42,8 @@ public class Board : MonoBehaviour
             _instance = this;
         }
         initialDimension = 30;
+        Publisher.MovementRequest += ObjectMoveRequest;
+        Publisher.MakeSpaceRequest += MakeSpace;
         Initialize();
     }
 
@@ -69,6 +68,7 @@ public class Board : MonoBehaviour
     public void AddCell(int x,int y,Vector2 minCorner)
     {
         GameObject newCell = Instantiate(mCellPrefab, transform);
+        newCell.GetComponent<CellController>().Setup();
         var pos = new Vector2((x * cellDimensionX), (y * cellDimensionY)) + minCorner;
 
         RectTransform rectTransform = newCell.GetComponent<RectTransform>();
@@ -130,22 +130,6 @@ public class Board : MonoBehaviour
         }
     }
     
-    public void PublishInformationPanelSetup(Sprite image, string text,string setterId)
-    {
-        panelSetterId = setterId;
-        InformationPanelContentSetup(image, text);
-    }
-
-    public void PublishInformationPanelUnitMenuSetup(GameObject gameObject, BuildingController setterObject)
-    {
-        InformationPanelActivateUnitMenu( gameObject,  setterObject);
-    }
-
-    public void PublishWarningPanelSetup(string text)
-    {
-        WarningPanelContentSetup( text);
-    }
-
     public bool PlaceTheObjects(params GameObject[] gameObjects)
     {
         Stack<string> keysToSetOccupied = new Stack<string>();
@@ -158,7 +142,7 @@ public class Board : MonoBehaviour
                     Destroy(gameObj);
                 }
 
-                NotifyBadPlacement();
+                Publisher.NotifyBadPlacement();
                 return false;
             }
         }
@@ -193,15 +177,106 @@ public class Board : MonoBehaviour
         return true;
     }
 
+    public bool ObjectMoveRequest(GameObject obj, Vector2 pos)
+    {
+        var targetPosition = new Vector2(pos.x - cellDimensionX / 2, pos.y - cellDimensionY / 2);
+        var targetCell = Cells[GenerateKey(targetPosition)];
+        if (targetCell.IsOccupied())
+        {
+            return false;
+        }
+        var tx = Math.Round(obj.transform.position.x - cellDimensionX / 2, 2);
+        var ty = Math.Round(obj.transform.position.y - cellDimensionY / 2, 2);
+        var currentPosition = new Vector2((float)tx, (float)ty);
+        var previousCell = Cells[GenerateKey(currentPosition)];
+        previousCell?.SetFree();
+        targetCell.SetOccupied();
+        targetCell.SetOccupier(obj);
+        obj.transform.position = new Vector3(pos.x, pos.y, obj.transform.position.z);
+        return true;
+    }
+
+    public bool MakeSpace(Vector2 pos,ref HashSet<Vector2> hash)
+    {
+        var leftBottom = new Vector2(pos.x - cellDimensionX , pos.y - cellDimensionY);
+        var mainCell = Cells[GenerateKey(pos)];
+        bool ItIsPossible = false;
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                if (x == 1 && y == 1)
+                {
+                    continue;
+                }
+                var side = leftBottom + new Vector2(x * cellDimensionX, y * cellDimensionY);
+                var key = GenerateKey(side);
+                if (!Cells.ContainsKey(key))
+                    AddCell(0, 0, side);
+                var cell = Cells[key];
+                if ( !cell.IsOccupied() || cell.GetOccupier() != null )
+                {
+                    ItIsPossible = true;
+                }
+            }
+        }
+        if (ItIsPossible == false) return false;
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                if (x == 1 && y == 1)
+                {
+                    continue;
+                }
+                var side = leftBottom + new Vector2(x * cellDimensionX, y * cellDimensionY);
+                if (hash.Contains(side)) continue;
+                var key = GenerateKey(side);
+                if (!Cells.ContainsKey(key))
+                    AddCell(0, 0, side);
+                var cell = Cells[key];
+                if (!cell.IsOccupied())
+                {
+                    GameObject occupier = mainCell.GetOccupier();
+                    occupier.GetComponent<SoldierController>().SetupMovement(side);
+                    return true;
+                }
+            }
+        }
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                if (x == 1 && y == 1)
+                {
+                    continue;
+                }
+                var side = leftBottom + new Vector2(x * cellDimensionX, y * cellDimensionY);
+                if (hash.Contains(side)) continue;
+                var key = GenerateKey(side);
+                if (!Cells.ContainsKey(key))
+                    AddCell(0, 0, side);
+                var cell = Cells[key];
+                if (cell.IsOccupied() && cell.GetOccupier() != null)
+                {
+                    hash.Add(side);
+                    bool res = MakeSpace(side,ref hash);
+                    if (res)
+                    {
+                        GameObject occupier = mainCell.GetOccupier();
+                        occupier.GetComponent<SoldierController>().SetupMovement(side);
+                    }
+                    return res;
+                }
+            }
+        }
+        return false;
+    }
+
     private Rect MakeRectangleOutOfGameObject(GameObject gameObject)
     {
         var collider = gameObject.GetComponent<BoxCollider2D>();
         return new Rect(gameObject.transform.position - new Vector3(collider.size.x / 2f, collider.size.y / 2f, 0f), collider.size);
     }
 
-    public void NotifyBadPlacement()
-    {
-        PublishWarningPanelSetup("Your placement of the building was incorrect. Buildings cannot be placed on top of other buildings, soldiers, or spawnpoints.");
-    }
-    
 }

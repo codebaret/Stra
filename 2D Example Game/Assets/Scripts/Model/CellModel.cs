@@ -5,6 +5,7 @@ using UnityEngine;
 public class CellModel
 {
     public bool isSpawnPoint;
+    public GameObject occupyingObject;
 
     public enum State
     {
@@ -18,5 +19,6 @@ public class CellModel
     {
         isSpawnPoint = false;
         state = State.Free;
+        occupyingObject = null;
     }
 }

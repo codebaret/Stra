@@ -61,7 +61,7 @@ public class PathfindingAStar
         public List<Vector2> GetAdjacentPositions()
         {
             List<Vector2> positions = new List<Vector2>();
-            var leftBottom = new Vector2(location.x - Board.Instance.cellDimensionX, location.y - Board.Instance.cellDimensionY);
+            var leftBottom = new Vector2(location.x - Board.cellDimensionX, location.y - Board.cellDimensionY);
             for (int x = 0; x < 3; x++)
             {
                 for (int y = 0; y < 3; y ++)
@@ -70,7 +70,7 @@ public class PathfindingAStar
                     {
                         continue;
                     }
-                    var pos = leftBottom + new Vector2(x * Board.Instance.cellDimensionX, y * Board.Instance.cellDimensionY);
+                    var pos = leftBottom + new Vector2(x * Board.cellDimensionX, y * Board.cellDimensionY);
                     positions.Add(pos);
                 }
             }
@@ -165,7 +165,7 @@ public class PathfindingAStar
             Node node = nodes[endKey];
             while (node.parent != null)
             {
-                path.Add(node.location + new Vector2(Board.Instance.cellDimensionX/2, Board.Instance.cellDimensionY / 2));
+                path.Add(node.location + new Vector2(Board.cellDimensionX/2, Board.cellDimensionY / 2));
                 node = node.parent;
             }
             path.Reverse();
